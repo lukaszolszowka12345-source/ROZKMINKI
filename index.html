@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>ROZKMINKI</title>
+<meta content="dark" name="color-scheme"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=Playfair+Display:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="assets/theme.css" rel="stylesheet"/></head>
+<body>
+<div class="wrap wrapLanding"><div class="topbar"><div><div class="brand">ROZKMINKI</div><div class="tag">Rozkminki.online • gra rozmów</div></div><div><div class="pill">Wybierz tryb</div></div></div>
+<div class="card">
+<span class="title">ROZKMINKI</span>
+<div class="subtitle">
+        Gra rozmów, które mają sens.<br/>
+        Jedno pytanie. Jedna chwila zatrzymania. Prawdziwa rozmowa.
+      </div>
+<div class="panel">
+<div class="buttons">
+<a class="btn demo" href="./demo/?v=1">DEMO</a>
+<button class="btn premium" id="goPremium" type="button">PREMIUM</button>
+</div>
+<div class="foot">
+          Premium przenosi do sklepu (zakup / logowanie). Po zakupie dostaniesz dostęp do gry w Shopify.
+        </div>
+</div>
+<div class="ver">LANDING • ROZKMINKI.ONLINE</div>
+</div>
+</div>
+<script>
+    // 100% pewne przekierowanie na stronę produktu w Shopify
+    document.getElementById("goPremium").addEventListener("click", function () {
+      window.location.assign("https://rozkminki.online/products/rozkminki-premium");
+    });
+  </script>
+</body>
+</html>

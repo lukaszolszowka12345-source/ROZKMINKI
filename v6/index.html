@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+
+<html lang="pl">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<title>ROZKMINKI — PREMIUM</title>
+
+<meta content="dark" name="color-scheme"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=Playfair+Display:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="../assets/theme.css" rel="stylesheet"/></head>
+<body>
+<div class="wrap">
+<div class="topbar">
+<div>
+<div class="brand">ROZKMINKI</div>
+<div class="tag">PREMIUM • 300 pytań</div>
+</div>
+<div class="topActions"><button class="btn btnGhost btnInfo" id="howtoBtn" type="button">Instrukcja</button><a class="btn btnGhost" href="https://rozkminki.online" title="Powrót na stronę główną">Strona główna</a></div>
+</div>
+<div class="card" id="screenSetup">
+<h1>Ustawienia gry</h1>
+<div class="mut">
+        Wpisz graczy, wybierz kategorie i zaczynamy. Pytania losują się losowo i nie powtarzają w trakcie jednej gry.
+        <span class="small">Stan gry zapisuje się automatycznie (odświeżenie nie psuje).</span>
+</div>
+<div class="grid">
+<div class="row">
+<button class="btn btnGhost" id="resumeBtn" type="button">Wznów grę</button>
+<button class="btn btnGhost" id="resetSaveBtn" type="button">Wyczyść zapis</button>
+</div>
+<div class="small" id="resumeInfo"></div>
+<div class="sep"></div>
+<div class="row">
+<label class="pill" style="flex:1">
+<input id="duoMode" type="checkbox"/>
+<span>Tryb 1-na-1 (tylko 2 osoby)</span>
+</label>
+<label class="pill" style="flex:1">
+<input id="safeMode" type="checkbox"/>
+<span>Tryb bezpieczny (bez Intymność i seks)</span>
+</label>
+</div>
+<div>
+<label>Liczba graczy (2–20)</label>
+<input id="playerCount" max="20" min="2" type="number" value="2"/>
+</div>
+<div id="playersBox"></div>
+<div>
+<label>Wybierz kategorie</label>
+<div class="row" id="catsBox"></div>
+<div class="small" style="margin-top:8px">
+            Po starcie nie zmienisz kategorii (żeby gra była spójna).
+          </div>
+</div>
+<div class="row">
+<button class="btn btnGhost btnWide" id="startBtn" type="button">Start</button>
+</div>
+</div>
+</div>
+<div class="card hide" id="screenGame">
+<div class="row rowBetween">
+<div class="pill" id="turnPill">Tura</div>
+<div class="row">
+<button class="btn btnGhost" id="restartBtn" type="button">Nowa gra</button>
+<button class="btn btnGhost" id="backBtn" type="button">Ustawienia</button>
+</div>
+</div>
+<div style="height:10px"></div>
+<div class="pill" id="metaPill">Info</div>
+<div style="height:10px"></div>
+<div class="bigQ" id="qBox">...</div>
+<div style="height:12px"></div>
+<div class="two">
+<button class="btn btnGhost btnWide" id="nextBtn" type="button">Losuj</button>
+<button class="btn btnGhost btnWide" id="skipBtn" type="button">Inne pytanie (10)</button>
+</div>
+<div style="height:10px"></div>
+<div class="small" id="stateInfo"></div>
+<div class="small warn" id="warnInfo"></div>
+</div>
+</div>
+<script>
+    // =========================
+    // PYTANIA: 10 kategorii x 30 = 300
+    // =========================
+    const CATEGORIES = [
+      { key:"relacje", label:"Relacje", questions:[
+        "Co w relacji jest dla Ciebie ważniejsze: spokój czy prawda – i dlaczego?",
+        "Jaki jest Twój najczęstszy „cichy żal” w relacjach – taki, o którym trudno mówić?",
+        "Jak rozpoznajesz, że jesteś w relacji naprawdę bezpieczny/a?",
+        "Co potrafisz dawać innym, ale trudno Ci to przyjmować od innych?",
+        "W jakich sytuacjach zamykasz się zamiast rozmawiać – i co jest pod spodem?",
+        "Jakiej jednej rzeczy nie chcesz powtarzać z poprzednich relacji?",
+        "Co oznacza dla Ciebie lojalność w praktyce, a nie w deklaracjach?",
+        "Jak reagujesz, gdy ktoś stawia Ci granicę – złością, smutkiem, szacunkiem, obojętnością?",
+        "Za co jesteś gotów/gotowa przeprosić, a za co nigdy nie przepraszasz?",
+        "Jak wygląda dla Ciebie „dobry konflikt” – taki, po którym jesteście bliżej?",
+        "W czym potrzebujesz więcej inicjatywy od drugiej osoby, a w czym więcej cierpliwości?",
+        "Jaką prawdę o Tobie warto, żeby bliska osoba znała, nawet jeśli jest niewygodna?",
+        "Co w relacji jest Twoją supermocą, a co Twoją miną?",
+        "W jakich momentach czujesz się niedoceniony/a – i jak zwykle to komunikujesz?",
+        "Co jest dla Ciebie oznaką szacunku w codzienności (małe rzeczy)?",
+        "Jaką rozmowę odkładasz i co by się stało, gdybyś ją odbył/a w tym tygodniu?",
+        "Czy w relacji bardziej boisz się odrzucenia czy utraty wolności?",
+        "Co jest Twoim „językiem troski” – jak pokazujesz, że Ci zależy?",
+        "Co jest Twoim „językiem bólu” – jak pokazujesz, że Ci trudno?",
+        "Jakie zachowanie drugiej osoby najszybciej odpala w Tobie obronę?",
+        "Kiedy czujesz, że musisz „zasłużyć” na miłość – i skąd to wiesz?",
+        "Jaką jedną rzecz chciał(a)byś usłyszeć częściej od bliskiej osoby?",
+        "Co dla Ciebie znaczy prawdziwa bliskość – i co ją psuje?",
+        "Jak wygląda Twoja idealna definicja partnerstwa/przyjaźni w 3 zdaniach?",
+        "Kiedy ostatnio byłeś/byłaś dumny/a z tego, jak się zachowałeś/aś w relacji?",
+        "Co wolisz: mieć rację czy mieć relację – i gdzie to widać u Ciebie?",
+        "Jaką granicę powinieneś/powinnaś wzmocnić, żeby relacja była zdrowsza?",
+        "Co w relacji jest dla Ciebie „czerwonym światłem”, nawet jeśli inni to bagatelizują?",
+        "Jakiej obietnicy sobie w relacjach nie dotrzymujesz najczęściej?",
+        "Co byś zmienił/a, gdybyś wierzył/a, że druga osoba Cię nie odrzuci?"
+      ]},
+      { key:"emocje", label:"Emocje", questions:[
+        "Jaka emocja najczęściej udaje u Ciebie „zmęczenie”?",
+        "Co Twoje ciało mówi pierwsze, zanim zrozumiesz, co czujesz?",
+        "Jaką emocję najtrudniej Ci okazywać przy innych i dlaczego?",
+        "Kiedy czujesz złość, o co najczęściej naprawdę chodzi pod spodem?",
+        "Jak wygląda Twoja osobista instrukcja: „kiedy jestem przytłoczony/a, pomóż mi tak…”?",
+        "Jaką emocję najtrudniej Ci kontrolować i jaką cenę za to płacisz?",
+        "Co robisz, gdy czujesz wstyd – atakujesz, uciekasz, żartujesz, zamierasz?",
+        "Jakie sytuacje budzą w Tobie niepokój, mimo że „na papierze” są normalne?",
+        "Co jest dla Ciebie najtrudniejsze w smutku: przyznać go, przeżyć czy poprosić o wsparcie?",
+        "Jak rozpoznajesz, że Twoja radość jest prawdziwa, a nie „na pokaz”?",
+        "Kiedy ostatnio poczułeś/aś ulgę – i co do niej doprowadziło?",
+        "Co Cię najbardziej rozczarowuje: ludzie, świat czy Ty sam/a?",
+        "Jak reagujesz na krytykę: bronisz się, słuchasz, zamykasz, atakujesz?",
+        "Jaka emocja pojawia się, gdy ktoś Cię chwali – i co to o Tobie mówi?",
+        "Co jest dla Ciebie sygnałem, że jesteś na granicy przeciążenia?",
+        "Jakie emocje najczęściej trzymasz w środku, żeby „nie robić problemu”?",
+        "Jak wygląda Twoje zdrowe uspokojenie się: co działa w 10 minut?",
+        "Czego boisz się najbardziej w konflikcie: krzyku, ciszy czy konsekwencji?",
+        "Jaką emocję mylisz z inną (np. lęk ze złością) i jak to zmienia Twoje decyzje?",
+        "Co robisz, gdy czujesz bezradność – i czy to Ci pomaga?",
+        "Jak reagujesz na stratę: działasz, zamierasz, zaprzeczasz, uciekasz w rozrywkę?",
+        "W jakich chwilach Twoje emocje są „głośniejsze” niż sytuacja i dlaczego?",
+        "Jak wygląda Twoja relacja z płaczem – kiedy go dopuszczasz, a kiedy blokujesz?",
+        "Jaką emocję chcesz czuć częściej i co możesz zrobić, żeby ją wspierać?",
+        "Co Cię najbardziej uspokaja: kontrola, bliskość czy sens?",
+        "Jaka emocja wraca do Ciebie w kółko jak temat do domknięcia?",
+        "Kiedy ostatnio przeprosiłeś/aś sam siebie za coś i jak to było?",
+        "W jakiej emocji podejmujesz najgorsze decyzje – i jakie to są decyzje?",
+        "Co robisz z zazdrością – mówisz, wstydzisz się, udajesz, że jej nie ma?",
+        "Jak by wyglądała Twoja odwaga emocjonalna w jednej konkretnej sytuacji?"
+      ]},
+      { key:"ja", label:"Ja (self)", questions:[
+        "Co jest Twoją wartością, której bronisz nawet wtedy, gdy to niewygodne?",
+        "Jaki masz mit o sobie, który już Ci nie służy?",
+        "Gdybyś miał/miała opisać siebie jednym zdaniem bez ról (mąż/żona, praca), co by to było?",
+        "Co w Tobie jest delikatne, a Ty to przykrywasz twardością?",
+        "W jakich sytuacjach zdradzasz siebie „po cichu”?",
+        "Co najbardziej lubisz w sobie, ale rzadko to mówisz?",
+        "Jaki masz nawyk samokrytyki i skąd go znasz?",
+        "Co robisz, gdy czujesz, że tracisz sprawczość?",
+        "Jak wygląda Twoja zdrowa duma – za co jesteś wdzięczny/a sobie?",
+        "Czego najbardziej się boisz, kiedy jesteś sam/a ze sobą w ciszy?",
+        "Jakie „muszę” chciał(a)byś zamienić na „wybieram”?",
+        "Gdzie w Twoim życiu brakuje Ci prostoty?",
+        "Jaką decyzję odkładasz, bo boisz się konsekwencji?",
+        "Co Cię najbardziej męczy: brak czasu, brak sensu czy brak uznania?",
+        "Kiedy czujesz, że jesteś autentyczny/a – po czym to poznajesz?",
+        "W czym jesteś konsekwentny/a, a w czym chronicznie się rozjeżdżasz?",
+        "Jakie słowo najczęściej opisuje Twój wewnętrzny klimat: presja, spokój, chaos, nadzieja?",
+        "Jaki masz prywatny standard życia, którego nie chcesz obniżać?",
+        "Jakiej potrzeby bronisz zbyt agresywnie, a jakiej w ogóle nie bronisz?",
+        "Co jest Twoim „cichym talentem”, który mógłby bardziej zaistnieć?",
+        "Co jest Twoją granicą, której nie umiesz jeszcze jasno postawić?",
+        "Jakie zachowanie u innych najbardziej Cię denerwuje, bo przypomina coś o Tobie?",
+        "Co w Tobie jest dojrzałe, a co nadal młode i zagubione?",
+        "Jak wyglądałaby Twoja wersja „wystarczająco dobry/a” zamiast „idealny/a”?",
+        "Jaką jedną rzecz chcesz w sobie wzmocnić w najbliższych 3 miesiącach?",
+        "Co Cię naprawdę buduje: sukces, relacje, sens, wolność, bezpieczeństwo?",
+        "Jaki jest Twój ulubiony sposób ucieczki – i co on zakrywa?",
+        "Jaką prawdę o sobie już wiesz, ale jeszcze jej nie przyjąłeś/aś?",
+        "Gdybyś mógł/mogła dać sobie radę sprzed 5 lat, co by to było?",
+        "Co uważasz za swój „główny kierunek” w życiu na dziś?"
+      ]},
+      { key:"rozwoj", label:"Rozwój", questions:[
+        "Jaki jeden nawyk daje Ci największy efekt, a Ty go zaniedbujesz?",
+        "Co jest Twoją wymówką, która brzmi rozsądnie, ale Cię zatrzymuje?",
+        "Jaka jedna rzecz, robiona codziennie przez 10 minut, zmieniłaby Twoje życie?",
+        "Jak wygląda Twoje „minimum” dbania o siebie, poniżej którego źle funkcjonujesz?",
+        "Co Cię bardziej napędza: wizja nagrody czy strach przed porażką?",
+        "Czego musisz się oduczyć, żeby wejść poziom wyżej?",
+        "Jak wygląda Twój styl sabotowania: chaos, odkładanie, perfekcjonizm, rozproszenie?",
+        "Co oznacza dla Ciebie dyscyplina – i z czym ją mylisz?",
+        "Jakie zadanie odkładasz, bo boisz się, że wyjdzie średnio?",
+        "Jaką jedną rzecz chcesz przestać robić w 2026 roku?",
+        "W czym potrzebujesz bardziej systemu niż motywacji?",
+        "Jakie trzy rzeczy są Twoimi prawdziwymi priorytetami – a nie deklaracjami?",
+        "Co Cię uczy Twoja porażka, której jeszcze nie przepracowałeś/aś?",
+        "Jak rozpoznajesz, że przesadzasz z ambicją kosztem życia?",
+        "Jakie środowisko najbardziej Ci sprzyja, a jakie Cię osłabia?",
+        "Jaką umiejętność chcesz podnieść w tym roku i po co?",
+        "Co jest Twoim największym „dźwignią”: sen, ruch, relacje, plan, delegowanie?",
+        "Jak wyglądają Twoje zdrowe granice w pracy/obowiązkach?",
+        "Jakie ryzyko warto dziś podjąć, żeby za rok nie żałować?",
+        "Co wolisz: szybki postęp czy stabilny rytm – i jak to wpływa na Twoje wyniki?",
+        "Jaki masz prosty wskaźnik, że idziesz w dobrą stronę?",
+        "Co Cię rozprasza najbardziej i jak możesz to ograniczyć o 20%?",
+        "Jaką jedną rzecz możesz uprościć, żeby odzyskać czas?",
+        "Jak wygląda Twoja definicja sukcesu, która nie jest cudzą definicją?",
+        "Co robisz, gdy tracisz momentum – wracasz czy odpuszczasz?",
+        "Jaki jest Twój największy punkt zwrotny w rozwoju i dlaczego?",
+        "Jaka jedna decyzja dodałaby Ci spokoju na co dzień?",
+        "Co Cię najbardziej rozwija: nauka, praktyka, rozmowa czy wyzwanie?",
+        "Jaki nawyk chcesz zbudować w wersji „realnej”, nie idealnej?",
+        "Jakie jedno „tak” musisz powiedzieć sobie, a jakie jedno „nie” innym?"
+      ]},
+      { key:"rodzina", label:"Rodzina", questions:[
+        "Jaki wzorzec z domu rodzinnego najbardziej Cię ukształtował?",
+        "Co w Twojej rodzinie było tematem tabu i jak to na Ciebie wpłynęło?",
+        "Jak wygląda Wasza domowa kultura przepraszania i naprawy relacji?",
+        "Jaką rolę grasz w rodzinie i czy ona Ci służy?",
+        "Co w rodzinie najbardziej buduje poczucie bezpieczeństwa?",
+        "Kiedy czujesz, że jesteś w domu „widoczny/a”, a kiedy niewidoczny/a?",
+        "Jakie tradycje chcesz kontynuować, a jakie zakończyć?",
+        "Jak wygląda zdrowa granica z rodziną – gdzie jest dla Ciebie linia?",
+        "Jak reagujesz, gdy bliscy mają inne zdanie niż Ty?",
+        "Co w rodzinnych konfliktach powtarza się jak scenariusz?",
+        "Jak by wyglądała rodzinna rozmowa, której wszyscy unikają?",
+        "Co byś chciał(a) usłyszeć od rodziny, choć może nigdy tego nie usłyszałeś/aś?",
+        "Jakie słowa w rodzinie ranią najbardziej, bo wracają od lat?",
+        "Co dla Ciebie znaczy „być dobrym rodzicem/partnerem/dzieckiem” – bez perfekcji?",
+        "Jaką jedną zmianę w domu warto wprowadzić, żeby było lżej?",
+        "Jak wygląda u Was okazywanie czułości – i czy Ci to odpowiada?",
+        "Jakie rodzinne przekonanie o pieniądzach/pracy nosisz w sobie do dziś?",
+        "Co czujesz, gdy ktoś z rodziny Cię zawodzi – złość, smutek, rezygnację?",
+        "Jakie wspomnienie rodzinne chcesz w sobie pielęgnować?",
+        "Jakie wspomnienie rodzinne wciąż Cię kłuje i dlaczego?",
+        "Czego potrzebujesz od rodziny dzisiaj, a czego potrzebowałeś/aś jako dziecko?",
+        "Jak rodzina reaguje na emocje: rozmawia, ucina temat, żartuje, milczy?",
+        "Jak wygląda w Twojej rodzinie szacunek w praktyce?",
+        "Jaką granicę warto postawić, żeby chronić relacje, a nie je zrywać?",
+        "Co wolisz w rodzinie: spokój za cenę milczenia czy rozmowę za cenę napięcia?",
+        "Jaką jedną rzecz chcesz przekazać młodszym jako wartościową?",
+        "Jaką jedną rzecz chcesz przestać przekazywać (schemat/reakcję)?",
+        "Co Cię najbardziej łączy z rodziną: historie, humor, wartości, wspólne cele?",
+        "Jak wygląda u Was domowa sprawiedliwość: kto daje więcej, kto bierze więcej?",
+        "Jakie trzy słowa opisują rodzinę, którą chcesz budować?"
+      ]},
+      { key:"intymnosc", label:"Intymność i seks", questions:[
+        "Co dla Ciebie oznacza intymność poza samym seksem?",
+        "Jak rozpoznajesz, że masz ochotę – a jak, że to raczej potrzeba bliskości?",
+        "Jakie rozmowy o seksie są dla Ciebie najtrudniejsze i dlaczego?",
+        "Co jest Twoją granicą w intymności, którą chcesz mieć uszanowaną?",
+        "Jakie zachowanie partnera/partnerki daje Ci poczucie pożądania?",
+        "Co jest Twoją definicją „bezpiecznego tak” w seksie?",
+        "Jak reagujesz na odmowę: umiesz ją przyjąć czy bierzesz to do siebie?",
+        "Jakie masz przekonanie o seksie z domu/kultury, które warto zaktualizować?",
+        "Co sprawia, że czujesz się atrakcyjny/a – i czy umiesz to komunikować?",
+        "Jak wygląda dla Ciebie dobra inicjatywa: słowa, gest, atmosfera?",
+        "Co wolał(a)byś, żeby było częściej: czułość, namiętność, rozmowa, spontaniczność?",
+        "Czy łatwiej Ci mówić o tym, czego chcesz, czy o tym, czego nie chcesz?",
+        "Jakie tempo intymności jest dla Ciebie komfortowe – i co je burzy?",
+        "Co jest dla Ciebie oznaką szacunku w sypialni (i poza nią)?",
+        "Jak reagujesz, gdy jest różnica potrzeb: walczysz, wycofujesz się, negocjujesz?",
+        "Co w Twoim życiu wpływa na libido najbardziej: stres, sen, emocje, relacja?",
+        "Jak rozumiesz zgodę/consent w praktyce – jakie są Twoje zasady?",
+        "Co chciał(a)byś spróbować w rozmowie o fantazjach, ale bez presji na realizację?",
+        "Jakie są Twoje „zielone światła” w intymności – sygnały, że jest dobrze?",
+        "Jakie są Twoje „czerwone światła” – sygnały, że trzeba zwolnić albo przerwać?",
+        "Co sprawia, że po seksie czujesz bliskość, a co sprawia, że czujesz dystans?",
+        "Jaką rolę w Waszej relacji odgrywa czułość w ciągu dnia?",
+        "Czy umiesz mówić o wstydzie w intymności – i kiedy on się pojawia?",
+        "Co jest dla Ciebie bardziej romantyczne: plan czy spontan?",
+        "Jak wyglądają Twoje potrzeby dotyku w porównaniu do potrzeb partnera/partnerki?",
+        "Co wolisz usłyszeć: komplement, konkretną prośbę czy zapewnienie o bezpieczeństwie?",
+        "Jakie drobne rzeczy mogłyby poprawić jakość Waszej intymności od jutra?",
+        "Jak wyglądałaby rozmowa o seksie, która byłaby spokojna, a nie napięta?",
+        "Co w intymności najbardziej Cię leczy, a co najbardziej rani?",
+        "Jak chcesz, żebyście dbali o intymność w długim terminie?"
+      ]},
+      { key:"praca_pieniadze", label:"Praca i pieniądze", questions:[
+        "Co Cię w pracy najbardziej napędza: sens, wpływ, pieniądze czy uznanie?",
+        "Jaki jest Twój największy stres finansowy i czy on jest realny czy wyobrażony?",
+        "Jakie masz przekonanie o pieniądzach, które Cię wspiera, a jakie Cię blokuje?",
+        "Kiedy czujesz, że pracujesz za dużo – i co wtedy sobie mówisz?",
+        "Jakie są Twoje trzy nie-negocjowalne zasady w pracy?",
+        "Co oznacza dla Ciebie bezpieczeństwo finansowe w konkretach (liczby/warunki)?",
+        "Jak reagujesz na ryzyko: kalkulujesz, zamrażasz się, idziesz na żywioł?",
+        "Co jest Twoją największą finansową dumą, a co największą lekcją?",
+        "Czy łatwiej Ci oszczędzać czy zarabiać – i dlaczego?",
+        "W czym masz w pracy największy talent, a w czym największą ślepotę?",
+        "Jakie decyzje finansowe podejmujesz emocjami, a nie rozumem?",
+        "Jak wygląda Twój zdrowy stosunek do ambicji zawodowej?",
+        "Co wolisz: stabilność czy wolność – i jak to wpływa na Twoje wybory?",
+        "Jak rozmawiasz o pieniądzach z bliskimi: otwarcie czy z napięciem?",
+        "Jaką jedną rzecz chcesz uporządkować w finansach w tym miesiącu?",
+        "Co jest dla Ciebie uczciwą zapłatą za Twoją pracę?",
+        "Jakie masz granice w pracy: dostępność, wiadomości, weekendy, telefon?",
+        "Gdybyś miał/miała zmienić pracę jutro, co byłoby warunkiem nr 1?",
+        "Co Cię kosztuje najwięcej w pracy: czas, energia, emocje, zdrowie?",
+        "Jakie jest Twoje „dlaczego” w pracy – po co to robisz?",
+        "Jak wygląda u Ciebie prokrastynacja finansowa (np. unikanie konta, podatków)?",
+        "Czy umiesz przyjmować pieniądze bez poczucia winy?",
+        "Jak reagujesz na sukces innych: inspiracja czy porównywanie?",
+        "Co w Twoim budżecie jest naprawdę ważne, a co jest autopilotem?",
+        "Jakie jedno ryzyko zawodowe byłoby warte podjęcia w najbliższym roku?",
+        "Co jest Twoją definicją „wystarczy” – kiedy umiesz przestać gonić?",
+        "Jaką rozmowę o pracy/pieniądzach odkładasz z bliską osobą?",
+        "Jakie są Twoje finansowe wartości: hojność, oszczędność, inwestycje, wolność?",
+        "Jak wygląda u Ciebie równowaga: praca–życie–rodzina w praktyce?",
+        "Co byś zrobił/a, gdyby pieniądze nie były problemem przez rok?"
+      ]},
+      { key:"zdrowie", label:"Zdrowie i ciało", questions:[
+        "Jakie sygnały z ciała ignorujesz najczęściej?",
+        "Co najbardziej poprawia Ci samopoczucie – i czemu nie robisz tego częściej?",
+        "Jak wygląda Twój sen w skali 1–10 i co by dało +1 punkt?",
+        "Jak reagujesz, gdy ciało mówi „stop”: słuchasz czy dociskasz?",
+        "Jaką relację masz z jedzeniem: troska, kontrola, chaos, emocje?",
+        "Co jest Twoim najsilniejszym nawykiem, który szkodzi zdrowiu?",
+        "Jakie trzy rzeczy Twoje ciało lubi najbardziej (ruch, rytm, spokój, natura)?",
+        "Czy umiesz odpoczywać bez poczucia winy?",
+        "Co robi stres w Twoim ciele: brzuch, głowa, plecy, sen, apetyt?",
+        "Jak wygląda Twoja definicja „dbania o siebie” bez przesady i bez lenistwa?",
+        "Co Cię najbardziej wyczerpuje: ludzie, obowiązki, hałas, brak planu?",
+        "Jaką jedną zmianę w odżywianiu/ruchu byłbyś w stanie utrzymać miesiąc?",
+        "Jakie zachowanie jest u Ciebie sygnałem, że jesteś przemęczony/a?",
+        "Co jest Twoim zdrowym sposobem regulacji emocji (bez jedzenia/scrollowania)?",
+        "Jak reagujesz na chorobę: odpoczywasz czy walczysz z tym?",
+        "Jakie masz przekonanie o „silności” i jak ono wpływa na zdrowie?",
+        "Czy umiesz prosić o pomoc, gdy fizycznie/psychicznie nie wyrabiasz?",
+        "Jak wygląda Twoja relacja z ruchem: przyjemność czy obowiązek?",
+        "Co w Twojej rutynie porannej/wieczornej najbardziej wpływa na energię?",
+        "Jakie są Twoje trzy największe „złodzieje energii”?",
+        "Co jest dla Ciebie definicją zdrowia: brak choroby czy dobra jakość życia?",
+        "Jak często słuchasz ciała zanim coś zaboli?",
+        "Jaką jedną rzecz możesz zrobić dzisiaj dla swojego ciała w 15 minut?",
+        "Jak reagujesz na własne potknięcia: wracasz czy rezygnujesz?",
+        "Co jest dla Ciebie formą relaksu, która naprawdę regeneruje?",
+        "Co w Twoim życiu byłoby łatwiejsze, gdybyś miał/miała więcej energii?",
+        "Jak wygląda Twoja higiena cyfrowa i jak wpływa na głowę?",
+        "Jakie masz sygnały ostrzegawcze wypalenia?",
+        "Co chciał(a)byś uszanować w swoim ciele bardziej: granice czy potrzeby?",
+        "Jaką decyzję zdrowotną odkładasz, choć wiesz, że warto?"
+      ]},
+      { key:"sens", label:"Sens i marzenia", questions:[
+        "Jakie pytanie o sens wraca do Ciebie regularnie?",
+        "Gdybyś miał/miała opisać swoje życie jako rozdział książki, jaki ma tytuł dziś?",
+        "Co jest Twoim największym „tak” w życiu – czymś, co Cię ożywia?",
+        "Jakie marzenie odłożyłeś/aś, bo wydawało się „niepoważne”?",
+        "Co byś zrobił/a, gdybyś wiedział/a, że Ci się nie może nie udać?",
+        "Jak wygląda Twoja definicja dobrego życia w 5 punktach?",
+        "Jaki jest Twój osobisty kompas: co pomaga Ci wybierać właściwie?",
+        "Co jest Twoim strachem egzystencjalnym: zmarnowanie czasu, samotność, brak wpływu?",
+        "Jakie trzy rzeczy chcesz pamiętać z tego okresu życia za 10 lat?",
+        "Co jest dla Ciebie ważniejsze: osiągnięcia czy relacje – i czy to się zmienia?",
+        "Jakie miejsce/aktywność sprawia, że czujesz sens bez słów?",
+        "Jaki jest Twój najpiękniejszy plan, którego boisz się nazwać?",
+        "Co musiałoby się stać, żebyś poczuł/a, że jesteś na swoim miejscu?",
+        "Jaką część siebie chciał(a)byś odzyskać (pasja, luz, ciekawość, odwaga)?",
+        "Co wolisz: bezpieczeństwo czy przygodę – i jak to wpływa na wybory?",
+        "Jak wyglądałby Twój idealny tydzień, gdybyś mógł/mogła go zaprojektować?",
+        "Co jest Twoim „dlaczego” w relacji z rodziną/pracą/życiem?",
+        "Jaką jedną rzecz chciał(a)byś zostawić po sobie ludziom (wartość, pamięć, przykład)?",
+        "Co w Twoim życiu jest piękne, ale Ty się do tego przyzwyczaiłeś/aś?",
+        "Jaką decyzję odkładasz, bo boisz się, że zmieni całe życie?",
+        "Co Cię najbardziej inspiruje: ludzie, miejsca, sztuka, natura, wiedza?",
+        "Jakie trzy cechy chcesz w sobie wzmacniać jako człowiek?",
+        "Co byś robił/a, gdybyś miał/miała o połowę mniej obowiązków?",
+        "Jakie są Twoje marzenia „ciche” i „głośne” – które realizujesz, a które chowasz?",
+        "Jak wygląda dla Ciebie wolność – i czego w niej najbardziej potrzebujesz?",
+        "Co jest Twoim największym źródłem nadziei w trudnych chwilach?",
+        "Jakie pytanie chciał(a)byś zadać przyszłemu sobie za 5 lat?",
+        "Jakie miejsce w życiu zajmuje u Ciebie duchowość/wiara/filozofia – jeśli w ogóle?",
+        "Gdybyś miał/miała wybrać jeden kierunek rozwoju na rok, jaki to będzie?",
+        "Co dzisiaj jest Twoim „małym sensem” – czymś, co daje sens tu i teraz?"
+      ]},
+      { key:"zabawa", label:"Zabawa i ciekawość", questions:[
+        "Jaki był Twój ostatni moment czystej frajdy – bez celu?",
+        "Co sprawia, że czujesz się jak dziecko: śmiech, ruch, rywalizacja, kreatywność?",
+        "Jaką rzecz chciał(a)byś umieć „dla zabawy”, nawet jeśli jest niepraktyczna?",
+        "Jak wyglądałby Wasz idealny wieczór bez telefonu?",
+        "Co jest Twoim ulubionym sposobem na rozładowanie napięcia w zdrowy sposób?",
+        "Jaka jest Twoja najbardziej nietypowa ciekawostka o sobie?",
+        "Gdybyś miał/miała zaplanować jednodniową przygodę, co by było jej motywem?",
+        "Co jest dla Ciebie śmieszne, ale inni tego nie łapią?",
+        "Jaką rzecz chciał(a)byś spróbować choć raz w życiu (bezpiecznie)?",
+        "Jak wygląda Twoje „tak” na spontaniczność – gdzie jest granica?",
+        "Jakie miejsce zawsze poprawia Ci humor (miasto, natura, kawiarnia, garaż)?",
+        "Jaka aktywność najbardziej Cię „odmładza” mentalnie?",
+        "Co wolisz: konkursy czy współpracę – i dlaczego?",
+        "Jaki jest Twój ulubiony rodzaj humoru: suchary, ironia, absurd, sytuacyjny?",
+        "Jaką drobną tradycję możecie wprowadzić, żeby było więcej radości?",
+        "Co jest Twoim „guilty pleasure” i czy w ogóle czujesz winę?",
+        "Jaka piosenka/film zawsze Cię stawia na nogi?",
+        "Gdybyś miał/miała dziś wymyślić grę dla znajomych, na czym by polegała?",
+        "Jakie pytanie chciał(a)byś usłyszeć częściej, bo jest fajne, nie ciężkie?",
+        "Co sprawia, że czujesz zachwyt – i kiedy ostatnio go czułeś/aś?",
+        "Jaki jest Twój ulubiony smak/zapach, który od razu przenosi Cię w dobre miejsce?",
+        "Jak wygląda Twoje idealne wakacyjne tempo: plan czy luz?",
+        "Co chciał(a)byś kolekcjonować, gdybyś miał/miała miejsce i czas?",
+        "Jaka jest Twoja mała „fanaberia”, która daje Ci radość?",
+        "Gdybyś miał/miała supermoc na 24 godziny, co by to było i po co?",
+        "Co jest Twoim ulubionym sposobem spędzania czasu z ludźmi: rozmowa, akcja, wspólne gotowanie?",
+        "Jaki jest Twój ulubiony żart sytuacyjny z życia (bez ośmieszania innych)?",
+        "Jaką nową rzecz możesz zrobić w tym tygodniu, żeby przerwać rutynę?",
+        "Co wolisz: odkrywać nowe czy wracać do sprawdzonych rzeczy – i dlaczego?",
+        "Jaką jedną rzecz możesz dziś zrobić, żeby mieć lepszy dzień niż rano myślałeś/aś?"
+      ]}
+    ];
+
+    // =========================
+    // LOSOWOŚĆ (crypto > Math.random)
+    // =========================
+    function randInt(maxExclusive){
+      if (maxExclusive <= 0) return 0;
+      if (window.crypto && crypto.getRandomValues){
+        const a = new Uint32Array(1);
+        crypto.getRandomValues(a);
+        return a[0] % maxExclusive;
+      }
+      return Math.floor(Math.random() * maxExclusive);
+    }
+
+    // =========================
+    // UI
+    // =========================
+    const setup = document.getElementById("screenSetup");
+    const game = document.getElementById("screenGame");
+
+    const playerCountEl = document.getElementById("playerCount");
+    const playersBox = document.getElementById("playersBox");
+    const catsBox = document.getElementById("catsBox");
+    const startBtn = document.getElementById("startBtn");
+
+    const duoModeEl = document.getElementById("duoMode");
+    const safeModeEl = document.getElementById("safeMode");
+
+    const resumeBtn = document.getElementById("resumeBtn");
+    const resetSaveBtn = document.getElementById("resetSaveBtn");
+    const resumeInfo = document.getElementById("resumeInfo");
+
+    const turnPill = document.getElementById("turnPill");
+    const metaPill = document.getElementById("metaPill");
+    const qBox = document.getElementById("qBox");
+    const nextBtn = document.getElementById("nextBtn");
+    const skipBtn = document.getElementById("skipBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const backBtn = document.getElementById("backBtn");
+    const stateInfo = document.getElementById("stateInfo");
+    const warnInfo = document.getElementById("warnInfo");
+
+    // =========================
+    // STATE
+    // =========================
+    const SAVE_KEY = "rozkminki_premium_state_v6";
+    const MAX_SKIPS_PER_PLAYER = 10;
+
+    let players = [];
+    let enabledCats = new Set();       // keys
+    let remaining = [];               // lista obiektów pytań, które jeszcze mogą wypaść (w tej grze)
+    let usedCount = 0;                // ile zaakceptowano (Losuj)
+    let currentQ = null;              // aktualne pytanie (nie usuwa się przy "Inne")
+    let askerIdx = 0;
+    let answererIdx = 1;
+    let skipsLeft = {};               // per player name
+    let duoMode = false;
+    let safeMode = false;
+
+    // =========================
+    // BUILDERS
+    // =========================
+    function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+
+    function buildRemainingFromSelection(){
+      const list = [];
+      CATEGORIES.forEach(cat=>{
+        if(!enabledCats.has(cat.key)) return;
+        cat.questions.forEach((text, idx)=>{
+          list.push({ id:`${cat.key}::${idx}`, catKey:cat.key, catLabel:cat.label, text });
+        });
+      });
+      return list;
+    }
+
+    function drawCandidate(exceptId=null){
+      if(!remaining.length) return null;
+      if(remaining.length === 1) return remaining[0];
+      let q;
+      // wylosuj coś innego niż exceptId (jeśli się da)
+      for(let tries=0; tries<12; tries++){
+        q = remaining[randInt(remaining.length)];
+        if(!exceptId || q.id !== exceptId) return q;
+      }
+      // fallback: pierwsze inne
+      const other = remaining.find(x => x.id !== exceptId);
+      return other || remaining[0];
+    }
+
+    function consumeCurrentQuestion(){
+      // pytanie wypada dopiero po "Losuj"
+      if(!currentQ) return;
+      const idx = remaining.findIndex(x => x.id === currentQ.id);
+      if(idx >= 0){
+        remaining.splice(idx, 1);
+        usedCount += 1;
+      }
+    }
+
+    // =========================
+    // RENDER SETUP
+    // =========================
+    function renderPlayers(){
+      let n = clamp(parseInt(playerCountEl.value||"2",10),2,20);
+      if(duoModeEl.checked){ n = 2; }
+      playerCountEl.value = n;
+
+      playersBox.innerHTML = "";
+      for(let i=0;i<n;i++){
+        const inp = document.createElement("input");
+        inp.placeholder = `Imię gracza ${i+1}`;
+        inp.id = `p_${i}`;
+        inp.autocomplete = "off";
+        inp.style.marginTop = "8px";
+        playersBox.appendChild(inp);
+      }
+    }
+
+    function renderCats(){
+      catsBox.innerHTML = "";
+      enabledCats = new Set();
+
+      CATEGORIES.forEach(cat=>{
+        const wrap = document.createElement("label");
+        wrap.className = "pill";
+
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = true;
+        cb.style.width = "auto";
+        cb.style.margin = "0";
+
+        // safeMode: wyłącz intymność
+        const isInt = (cat.key === "intymnosc");
+        if(safeModeEl.checked && isInt){
+          cb.checked = false;
+          cb.disabled = true;
+        }
+
+        cb.addEventListener("change", ()=>{
+          if(cb.checked) enabledCats.add(cat.key);
+          else enabledCats.delete(cat.key);
+        });
+
+        if(cb.checked) enabledCats.add(cat.key);
+
+        const span = document.createElement("span");
+        span.textContent = cat.label;
+
+        wrap.appendChild(cb);
+        wrap.appendChild(span);
+        catsBox.appendChild(wrap);
+      });
+    }
+
+    // =========================
+    // GAME UI
+    // =========================
+    function setTurnPills(){
+      const asker = players[askerIdx] || `Gracz ${askerIdx+1}`;
+      const ans = players[answererIdx] || `Gracz ${answererIdx+1}`;
+      turnPill.textContent = `${asker} → pyta`;
+      metaPill.textContent = `${ans} → odpowiada • zmiany: ${skipsLeft[ans] ?? 0}`;
+      skipBtn.textContent = `Inne pytanie (${skipsLeft[ans] ?? 0})`;
+      skipBtn.disabled = (skipsLeft[ans] ?? 0) <= 0;
+    }
+
+    function renderQuestion(){
+      warnInfo.textContent = "";
+      if(!currentQ){
+        qBox.textContent = "Brak pytania.";
+        stateInfo.textContent = "";
+        return;
+      }
+      setTurnPills();
+      qBox.textContent = currentQ.text;
+
+      const total = usedCount + remaining.length;
+      const remainingCount = remaining.length;
+      const used = usedCount;
+
+      stateInfo.textContent =
+        `Kategoria: ${currentQ.catLabel} • Zużyto: ${used}/${total} • Zostało: ${remainingCount}`;
+    }
+
+    // =========================
+    // SAVE / LOAD
+    // =========================
+    function saveState(){
+      try{
+        const state = {
+          v: 6,
+          players,
+          enabledCats: Array.from(enabledCats),
+          remaining,
+          usedCount,
+          currentQ,
+          askerIdx,
+          answererIdx,
+          skipsLeft,
+          duoMode: !!duoModeEl.checked,
+          safeMode: !!safeModeEl.checked
+        };
+        localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+      }catch(e){}
+    }
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(SAVE_KEY);
+        if(!raw) return null;
+        const st = JSON.parse(raw);
+        if(!st || !st.v) return null;
+        return st;
+      }catch(e){
+        return null;
+      }
+    }
+
+    function clearSave(){
+      try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
+      updateResumeUI();
+    }
+
+    function updateResumeUI(){
+      const st = loadState();
+      if(!st){
+        resumeBtn.disabled = true;
+        resumeInfo.textContent = "Brak zapisu gry.";
+        return;
+      }
+      resumeBtn.disabled = false;
+      const total = (st.usedCount ?? 0) + (st.remaining?.length ?? 0);
+      resumeInfo.textContent = `Zapis znaleziony: gracze ${st.players?.length || 0}, zużyto ${st.usedCount || 0}/${total}.`;
+    }
+
+    // =========================
+    // START / RESUME
+    // =========================
+    function startGame(){
+      // players
+      let n = clamp(parseInt(playerCountEl.value||"2",10),2,20);
+      if(duoModeEl.checked) n = 2;
+
+      players = [];
+      for(let i=0;i<n;i++){
+        const v = (document.getElementById(`p_${i}`)?.value || "").trim();
+        players.push(v || `Gracz ${i+1}`);
+      }
+
+      // categories
+      if(enabledCats.size === 0){
+        alert("Wybierz przynajmniej jedną kategorię.");
+        return;
+      }
+
+      // skips
+      skipsLeft = {};
+      players.forEach(p => skipsLeft[p] = MAX_SKIPS_PER_PLAYER);
+
+      // indexes
+      askerIdx = 0;
+      answererIdx = (players.length > 1 ? 1 : 0);
+
+      // pool
+      usedCount = 0;
+      remaining = buildRemainingFromSelection();
+
+      if(remaining.length === 0){
+        alert("Brak pytań w wybranych kategoriach.");
+        return;
+      }
+
+      currentQ = drawCandidate(null);
+
+      setup.classList.add("hide");
+      game.classList.remove("hide");
+      nextBtn.disabled = false;
+
+      renderQuestion();
+      saveState();
+    }
+
+    function resumeGame(){
+      const st = loadState();
+      if(!st){
+        warnInfo.textContent = "Brak zapisu gry.";
+        return;
+      }
+
+      players = st.players || [];
+      enabledCats = new Set(st.enabledCats || []);
+      remaining = st.remaining || [];
+      usedCount = st.usedCount || 0;
+      currentQ = st.currentQ || null;
+      askerIdx = st.askerIdx || 0;
+      answererIdx = st.answererIdx || 1;
+      skipsLeft = st.skipsLeft || {};
+
+      duoModeEl.checked = !!st.duoMode;
+      safeModeEl.checked = !!st.safeMode;
+
+      setup.classList.add("hide");
+      game.classList.remove("hide");
+      nextBtn.disabled = false;
+
+      renderQuestion();
+      saveState();
+    }
+
+    // =========================
+    // ACTIONS
+    // =========================
+    function nextTurn(){
+      // zaakceptuj pytanie -> wypada z puli
+      consumeCurrentQuestion();
+
+      if(remaining.length === 0){
+        qBox.textContent = "Koniec pytań w tej grze 🙂 Kliknij „Nowa gra”, by zacząć od nowa.";
+        stateInfo.textContent = "";
+        skipBtn.disabled = true;
+        nextBtn.disabled = true;
+        saveState();
+        return;
+      }
+
+      // zmiana tury
+      askerIdx = (askerIdx + 1) % players.length;
+      answererIdx = (askerIdx + 1) % players.length;
+
+      // losuj z całej pozostałej puli
+      currentQ = drawCandidate(null);
+      renderQuestion();
+      saveState();
+    }
+
+    function skipQuestion(){
+      const ans = players[answererIdx];
+      if((skipsLeft[ans] ?? 0) <= 0){
+        warnInfo.textContent = "Nie masz już zmian w tej grze.";
+        return;
+      }
+      skipsLeft[ans] -= 1;
+
+      // UWAGA: nie usuwamy currentQ z puli — wraca (czyli po prostu losujemy inny)
+      currentQ = drawCandidate(currentQ?.id || null);
+      renderQuestion();
+      saveState();
+    }
+
+    function restart(){
+      // nowa gra: pełna pula, od nowa
+      nextBtn.disabled = false;
+      skipBtn.disabled = false;
+
+      usedCount = 0;
+      remaining = buildRemainingFromSelection();
+
+      skipsLeft = {};
+      players.forEach(p => skipsLeft[p] = MAX_SKIPS_PER_PLAYER);
+
+      askerIdx = 0;
+      answererIdx = (players.length > 1 ? 1 : 0);
+      currentQ = drawCandidate(null);
+
+      renderQuestion();
+      saveState();
+    }
+
+    function backToSetup(){
+      // wróć do ustawień (gra zostaje zapisana — można wznowić)
+      game.classList.add("hide");
+      setup.classList.remove("hide");
+      updateResumeUI();
+    }
+
+    // =========================
+    // INIT
+    // =========================
+    duoModeEl.addEventListener("change", ()=>{
+      if(duoModeEl.checked){
+        playerCountEl.value = 2;
+      }
+      renderPlayers();
+    });
+
+    safeModeEl.addEventListener("change", ()=>{
+      renderCats();
+    });
+
+    renderPlayers();
+    renderCats();
+    updateResumeUI();
+
+    playerCountEl.addEventListener("input", renderPlayers);
+    startBtn.addEventListener("click", startGame);
+    nextBtn.addEventListener("click", nextTurn);
+    skipBtn.addEventListener("click", skipQuestion);
+    restartBtn.addEventListener("click", restart);
+    backBtn.addEventListener("click", backToSetup);
+
+    resumeBtn.addEventListener("click", resumeGame);
+    resetSaveBtn.addEventListener("click", clearSave);
+
+    // autosave on page hide
+    window.addEventListener("visibilitychange", ()=>{
+      if(document.visibilityState === "hidden") saveState();
+    });
+    window.addEventListener("beforeunload", saveState);
+  </script>
+<div class="modal" id="howtoModal" aria-hidden="true" role="dialog" aria-label="Instrukcja gry">
+  <div class="modalBackdrop" data-close="1"></div>
+  <div class="modalCard" role="document">
+    <div class="modalHead">
+      <div class="modalTitle">Instrukcja gry</div>
+      <button class="btn btnGhost" type="button" id="howtoClose" aria-label="Zamknij">Powrót</button>
+    </div>
+    <div class="modalBody">
+      <p><strong>Rozkminki</strong> to gra rozmów, która pomaga lepiej poznać siebie i innych — przez pytania, które otwierają, poruszają i zbliżają.</p>
+      <p>W trakcie gry mogą pojawić się silniejsze emocje (wzruszenie, smutek, śmiech, zaskoczenie). Dajcie sobie przestrzeń: zatrzymajcie grę, dopytajcie, porozmawiajcie — a gdy trzeba, zróbcie przerwę i wróćcie później.</p>
+
+      <h3>Jak grać</h3>
+      <ol class="modalList">
+        <li>Ustalcie liczbę graczy (od <strong>2 do 20</strong>) i wpiszcie imiona.</li>
+        <li>Wybierzcie kategorie, które mają brać udział w rozgrywce (możecie pominąć te, na które nie macie dziś przestrzeni).</li>
+        <li>Osoba rozpoczynająca klika <strong>Losuj</strong>, czyta pytanie i kieruje je do kolejnej osoby.</li>
+        <li>Po odpowiedzi <strong>osoba odpowiadająca</strong> losuje pytanie dla następnej osoby — i tak dalej, w kółko.</li>
+      </ol>
+
+      <h3>Dobre zasady rozmowy</h3>
+      <ul class="modalList">
+        <li>Jeśli odpowiedź odbiega od pytania — delikatnie nakierujcie z powrotem na temat.</li>
+        <li>Jeśli odpowiedź jest zbyt krótka — poproście o rozwinięcie („Opowiesz więcej?” „Co masz na myśli?”).</li>
+        <li>Nie oceniajcie. Słuchajcie. Wspierajcie. To gra o ciekawości, nie o racji.</li>
+      </ul>
+
+      <h3>Zmiana pytania i koniec gry</h3>
+      <ul class="modalList">
+        <li>Każdy gracz ma ograniczoną liczbę <strong>zmian pytania</strong> w trakcie jednej gry (licznik widzisz przy przycisku).</li>
+        <li>Gdy klikniesz <strong>Inne pytanie</strong>, aktualne pytanie wraca do puli — może je jeszcze wylosować ktoś inny.</li>
+        <li>Gra może zakończyć się w dowolnym momencie albo po wyczerpaniu pytań w wybranych kategoriach.</li>
+      </ul>
+
+      <div class="modalHint">Wskazówka: najlepsze „Rozkminki” dzieją się wtedy, gdy odpowiadamy szczerze i pozwalamy sobie na chwilę ciszy.</div>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+(function(){
+  const btn = document.getElementById('howtoBtn');
+  const modal = document.getElementById('howtoModal');
+  const closeBtn = document.getElementById('howtoClose');
+  if(!btn || !modal || !closeBtn) return;
+
+  function openModal(){
+    modal.classList.add('isOpen');
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){
+    modal.classList.remove('isOpen');
+    modal.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+  }
+
+  btn.addEventListener('click', openModal);
+  closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e)=>{
+    if(e.target && e.target.dataset && e.target.dataset.close) closeModal();
+  });
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && modal.classList.contains('isOpen')) closeModal();
+  });
+})();
+</script>
+</html>
