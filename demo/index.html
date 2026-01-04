@@ -24,7 +24,14 @@
 <div class="grid">
 <div>
 <label>Liczba graczy (2–20)</label>
-<input id="playerCount" max="20" min="2" type="number" value="2"/>
+<div class="row" style="align-items:center; gap:10px">
+  <button class="btn btnGhost" id="pMinus" type="button" style="width:52px;padding:12px 0">−</button>
+  <div class="pill" id="pValue" style="min-width:86px;justify-content:center;font-weight:900">2</div>
+  <button class="btn btnGhost" id="pPlus" type="button" style="width:52px;padding:12px 0">+</button>
+  <input id="playerCount" type="hidden" value="2" />
+</div>
+<div class="small" style="margin-top:6px">Zakres: 2–20</div>
+
 </div>
 <div id="playersBox"></div>
 <div>
