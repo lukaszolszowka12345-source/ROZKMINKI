@@ -1,81 +1,106 @@
 <!DOCTYPE html>
-
 <html lang="pl">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
-<title>ROZKMINKI — DEMO</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>ROZKMINKI — DEMO</title>
 
-<meta content="dark" name="color-scheme"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;family=Playfair+Display:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="../assets/theme.css" rel="stylesheet"/></head>
+  <meta name="color-scheme" content="dark"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet"/>
+  <link href="../assets/theme.css" rel="stylesheet"/>
+</head>
+
 <body>
-<div class="wrap">
-<div class="topbar">
-<div>
-<div class="brand">ROZKMINKI</div>
-<div class="tag">DEMO • 10 kategorii (po 1 pytaniu)</div>
-</div>
-<div class="topActions"><button class="btn btnGhost btnInfo" id="howtoBtn" type="button">Instrukcja</button><button class="btn btnGold" id="premiumTop" type="button">PREMIUM</button></div>
-</div>
-<div class="card" id="screenSetup">
-<h1>Demo gry</h1>
-<div class="mut">
+  <div class="wrap">
+    <div class="topbar">
+      <div>
+        <div class="brand">ROZKMINKI</div>
+        <div class="tag">DEMO • 10 kategorii (po 1 pytaniu)</div>
+      </div>
+      <div class="topActions">
+        <button class="btn btnGhost btnInfo" id="howtoBtn" type="button">Instrukcja</button>
+        <button class="btn btnGold" id="premiumTop" type="button">PREMIUM</button>
+      </div>
+    </div>
+
+    <div class="card" id="screenSetup">
+      <h1>Demo gry</h1>
+      <div class="mut">
         Przedsmak pełnej wersji — po jednym pytaniu na kategorię. W Premium masz pełną pulę pytań.
       </div>
-<div class="grid">
-<div>
-<label>Liczba graczy (2–20)</label>
-<div class="row" style="align-items:center; gap:10px">
-  <button class="btn btnGhost" id="pMinus" type="button" style="width:52px;padding:12px 0">−</button>
-  <div class="pill" id="pValue" style="min-width:86px;justify-content:center;font-weight:900">2</div>
-  <button class="btn btnGhost" id="pPlus" type="button" style="width:52px;padding:12px 0">+</button>
-  <input id="playerCount" type="hidden" value="2" />
-</div>
-<div class="small" style="margin-top:6px">Zakres: 2–20</div>
 
-</div>
-<div id="playersBox"></div>
-<div>
-<label>Wybierz kategorie (DEMO)</label>
-<div class="row" id="catsBox"></div>
-</div>
-<div class="row">
-<button class="btn btnGhost btnWide" id="startBtn" type="button">Zagraj w DEMO</button>
-</div>
-<div class="two">
-<button class="btn btnGold btnWide" id="premiumBottom1" type="button">Premium — pełna wersja</button>
-<button class="btn btnGold btnWide" id="premiumBottom2" type="button">Premium — kup dostęp</button>
-</div>
-<div class="small">
+      <div class="grid">
+        <div>
+          <label>Liczba graczy (2–20)</label>
+
+          <div class="row" style="align-items:center; gap:10px">
+            <button class="btn btnGhost" id="pMinus" type="button" style="width:52px;padding:12px 0">−</button>
+            <div class="pill" id="pValue" style="min-width:86px;justify-content:center;font-weight:900">2</div>
+            <button class="btn btnGhost" id="pPlus" type="button" style="width:52px;padding:12px 0">+</button>
+
+            <!-- trzymamy wartość, bo logika opiera się na playerCount -->
+            <input id="playerCount" type="hidden" value="2" />
+          </div>
+
+          <div class="small" style="margin-top:6px">Zakres: 2–20</div>
+        </div>
+
+        <div id="playersBox"></div>
+
+        <div>
+          <label>Wybierz kategorie (DEMO)</label>
+          <div class="row" id="catsBox"></div>
+        </div>
+
+        <div class="row">
+          <button class="btn btnGhost btnWide" id="startBtn" type="button">Zagraj w DEMO</button>
+        </div>
+
+        <div class="two">
+          <button class="btn btnGold btnWide" id="premiumBottom1" type="button">Premium — pełna wersja</button>
+          <button class="btn btnGold btnWide" id="premiumBottom2" type="button">Premium — kup dostęp</button>
+        </div>
+
+        <div class="small">
           W DEMO pytania nie powtarzają się w tej grze — ale pula jest krótka.
         </div>
-</div>
-</div>
-<div class="card hide" id="screenGame">
-<div class="row rowBetween">
-<div class="pill" id="turnPill">Tura</div>
-<div class="row">
-<button class="btn btnGhost" id="copyBtn" type="button">Kopiuj pytanie</button>
-<button class="btn btnGold" id="premiumInGame" type="button">PREMIUM</button>
-</div>
-</div>
-<div style="height:10px"></div>
-<div class="pill" id="metaPill">Info</div>
-<div style="height:10px"></div>
-<div class="bigQ" id="qBox">...</div>
-<div style="height:12px"></div>
-<div class="two">
-<button class="btn btnGhost btnWide" id="nextBtn" type="button">Losuj</button>
-<button class="btn btnGhost btnWide" id="skipBtn" type="button">Inne pytanie (2)</button>
-</div>
-<div style="height:10px"></div>
-<div class="small" id="stateInfo"></div>
-<div class="small warn" id="warnInfo"></div>
-</div>
-</div>
-<script>
+      </div>
+    </div>
+
+    <div class="card hide" id="screenGame">
+      <div class="row rowBetween">
+        <div class="pill" id="turnPill">Tura</div>
+        <div class="row">
+          <button class="btn btnGhost" id="copyBtn" type="button">Kopiuj pytanie</button>
+          <button class="btn btnGold" id="premiumInGame" type="button">PREMIUM</button>
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+      <div class="pill" id="metaPill">Info</div>
+      <div style="height:10px"></div>
+
+      <div class="bigQ" id="qBox">...</div>
+
+      <div style="height:12px"></div>
+      <div class="two">
+        <button class="btn btnGhost btnWide" id="nextBtn" type="button">Losuj</button>
+        <button class="btn btnGhost btnWide" id="skipBtn" type="button">Inne pytanie (2)</button>
+      </div>
+
+      <div style="height:10px"></div>
+      <div class="small" id="stateInfo"></div>
+      <div class="small warn" id="warnInfo"></div>
+    </div>
+  </div>
+
+  <script>
     const PREMIUM_PRODUCT_URL = "https://rozkminki.online/products/rozkminki-premium";
 
-    // DEMO: 10 kategorii, po 1 pytaniu (wybrane z Twojego zestawu)
+    // DEMO: 10 kategorii, po 1 pytaniu
     const QUESTIONS = {
       "Relacje": [
         "Co w relacji jest dla Ciebie ważniejsze: spokój czy prawda – i dlaczego?"
@@ -111,6 +136,7 @@
 
     const CAT_ORDER = Object.keys(QUESTIONS);
 
+    // elements
     const setup = document.getElementById("screenSetup");
     const game = document.getElementById("screenGame");
 
@@ -118,10 +144,6 @@
     const playersBox = document.getElementById("playersBox");
     const catsBox = document.getElementById("catsBox");
     const startBtn = document.getElementById("startBtn");
-        const pMinus = document.getElementById("pMinus");
-const pPlus  = document.getElementById("pPlus");
-const pValue = document.getElementById("pValue");
-
 
     const turnPill = document.getElementById("turnPill");
     const metaPill = document.getElementById("metaPill");
@@ -132,14 +154,20 @@ const pValue = document.getElementById("pValue");
     const stateInfo = document.getElementById("stateInfo");
     const warnInfo = document.getElementById("warnInfo");
 
-    // Premium buttons -> product page
+    // +/− elements (FIX)
+    const pMinus = document.getElementById("pMinus");
+    const pPlus  = document.getElementById("pPlus");
+    const pValue = document.getElementById("pValue");
+
+    // Premium buttons -> product page (bez crasha gdyby czegoś brakowało)
     [
       document.getElementById("premiumTop"),
       document.getElementById("premiumBottom1"),
       document.getElementById("premiumBottom2"),
       document.getElementById("premiumInGame"),
-    ].forEach(b => b.addEventListener("click", () => window.location.assign(PREMIUM_PRODUCT_URL)));
+    ].filter(Boolean).forEach(b => b.addEventListener("click", () => window.location.assign(PREMIUM_PRODUCT_URL)));
 
+    // state
     let players = [];
     let enabledCats = new Set();
     let deck = [];
@@ -152,8 +180,11 @@ const pValue = document.getElementById("pValue");
     function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
     function renderPlayers(){
-      const n = clamp(parseInt(playerCountEl.value || "2",10), 2, 20);
+      const n = clamp(parseInt(playerCountEl.value || "2", 10), 2, 20);
       playerCountEl.value = n;
+
+      // FIX: aktualizuj widoczny licznik
+      if (pValue) pValue.textContent = String(n);
 
       playersBox.innerHTML = "";
       for(let i=0;i<n;i++){
@@ -233,180 +264,4 @@ const pValue = document.getElementById("pValue");
     function showQuestion(item){
       setTurnPills();
       qBox.textContent = item.q;
-      stateInfo.textContent = `Kategoria: ${item.cat} • Pozostało pytań w DEMO: ${deck.length}`;
-      const ans = players[answererIdx];
-      const left = skipsLeft[ans] ?? 0;
-      skipBtn.textContent = `Inne pytanie (${left})`;
-      skipBtn.disabled = left <= 0;
-    }
-
-    function startGame(){
-      const n = clamp(parseInt(playerCountEl.value||"2",10),2,20);
-      players = [];
-      for(let i=0;i<n;i++){
-        const v = (document.getElementById(`p_${i}`)?.value || "").trim();
-        players.push(v || `Gracz ${i+1}`);
-      }
-
-      if(enabledCats.size === 0){
-        alert("Wybierz przynajmniej jedną kategorię.");
-        return;
-      }
-
-      // demo: 2 pominięcia na gracza
-      skipsLeft = {};
-      players.forEach(p => skipsLeft[p] = 2);
-
-      used = new Set();
-      buildDeck();
-
-      askerIdx = 0;
-      answererIdx = (players.length>1 ? 1 : 0);
-
-      currentQ = pickNextQuestion();
-      if(!currentQ){
-        alert("Brak pytań w wybranych kategoriach (DEMO).");
-        return;
-      }
-
-      setup.classList.add("hide");
-      game.classList.remove("hide");
-      showQuestion(currentQ);
-    }
-
-    function nextTurn(){
-      askerIdx = (askerIdx + 1) % players.length;
-      answererIdx = (askerIdx + 1) % players.length;
-
-      const item = pickNextQuestion();
-      if(!item){
-        qBox.textContent = "Koniec DEMO 🙂 Kliknij PREMIUM, aby przejść do zakupu pełnej wersji.";
-        stateInfo.textContent = "";
-        skipBtn.disabled = true;
-        nextBtn.disabled = true;
-        warnInfo.innerHTML = `Kliknij <b>PREMIUM</b>, aby przejść do zakupu.`;
-        return;
-      }
-      currentQ = item;
-      showQuestion(item);
-    }
-
-    function skipQuestion(){
-      const ans = players[answererIdx];
-      if((skipsLeft[ans] ?? 0) <= 0){
-        warnInfo.textContent = "Nie masz już pominięć w tej grze.";
-        return;
-      }
-      skipsLeft[ans] -= 1;
-
-      const item = pickNextQuestion();
-      if(!item){
-        qBox.textContent = "Koniec DEMO 🙂";
-        nextBtn.disabled = true;
-        skipBtn.disabled = true;
-        return;
-      }
-      currentQ = item;
-      showQuestion(item);
-    }
-
-    function copyCurrent(){
-      const asker = players[askerIdx];
-      const ans = players[answererIdx];
-      const txt = `ROZKMINKI (DEMO)\n${asker} pyta → ${ans} odpowiada\n[${currentQ?.cat || ""}] ${currentQ?.q || ""}`;
-      navigator.clipboard?.writeText(txt).then(()=>{
-        warnInfo.textContent = "Skopiowano ✅";
-        setTimeout(()=>warnInfo.textContent="", 900);
-      }).catch(()=>{
-        warnInfo.textContent = "Nie udało się skopiować (blokada przeglądarki).";
-      });
-    }
-
-    // init
-    renderPlayers();
-    renderCats();
-
-    playerCountEl.addEventListener("input", renderPlayers);
-        if (pValue) pValue.textContent = String(n);
-
-    startBtn.addEventListener("click", startGame);
-    nextBtn.addEventListener("click", nextTurn);
-    skipBtn.addEventListener("click", skipQuestion);
-    copyBtn.addEventListener("click", copyCurrent);
-        function bumpPlayers(delta){
-  const cur = parseInt(playerCountEl.value || "2", 10);
-  playerCountEl.value = clamp(cur + delta, 2, 20);
-  playerCountEl.dispatchEvent(new Event("input", { bubbles: true }));
-}
-
-pMinus.addEventListener("click", () => bumpPlayers(-1));
-pPlus.addEventListener("click", () => bumpPlayers(+1));
-
-  </script>
-<div class="modal" id="howtoModal" aria-hidden="true" role="dialog" aria-label="Instrukcja gry">
-  <div class="modalBackdrop" data-close="1"></div>
-  <div class="modalCard" role="document">
-    <div class="modalHead">
-      <div class="modalTitle">Instrukcja gry</div>
-      <button class="btn btnGhost" type="button" id="howtoClose" aria-label="Zamknij">Powrót</button>
-    </div>
-    <div class="modalBody">
-      <p><strong>Rozkminki</strong> to gra rozmów, która pomaga lepiej poznać siebie i innych — przez pytania, które otwierają, poruszają i zbliżają.</p>
-      <p>W trakcie gry mogą pojawić się silniejsze emocje (wzruszenie, smutek, śmiech, zaskoczenie). Dajcie sobie przestrzeń: zatrzymajcie grę, dopytajcie, porozmawiajcie — a gdy trzeba, zróbcie przerwę i wróćcie później.</p>
-
-      <h3>Jak grać</h3>
-      <ol class="modalList">
-        <li>Ustalcie liczbę graczy (od <strong>2 do 20</strong>) i wpiszcie imiona.</li>
-        <li>Wybierzcie kategorie, które mają brać udział w rozgrywce (możecie pominąć te, na które nie macie dziś przestrzeni).</li>
-        <li>Osoba rozpoczynająca klika <strong>Losuj</strong>, czyta pytanie i kieruje je do kolejnej osoby.</li>
-        <li>Po odpowiedzi <strong>osoba odpowiadająca</strong> losuje pytanie dla następnej osoby — i tak dalej, w kółko.</li>
-      </ol>
-
-      <h3>Dobre zasady rozmowy</h3>
-      <ul class="modalList">
-        <li>Jeśli odpowiedź odbiega od pytania — delikatnie nakierujcie z powrotem na temat.</li>
-        <li>Jeśli odpowiedź jest zbyt krótka — poproście o rozwinięcie („Opowiesz więcej?” „Co masz na myśli?”).</li>
-        <li>Nie oceniajcie. Słuchajcie. Wspierajcie. To gra o ciekawości, nie o racji.</li>
-      </ul>
-
-      <h3>Zmiana pytania i koniec gry</h3>
-      <ul class="modalList">
-        <li>Każdy gracz ma ograniczoną liczbę <strong>zmian pytania</strong> w trakcie jednej gry (licznik widzisz przy przycisku).</li>
-        <li>Gdy klikniesz <strong>Inne pytanie</strong>, aktualne pytanie wraca do puli — może je jeszcze wylosować ktoś inny.</li>
-        <li>Gra może zakończyć się w dowolnym momencie albo po wyczerpaniu pytań w wybranych kategoriach.</li>
-      </ul>
-
-      <div class="modalHint">Wskazówka: najlepsze „Rozkminki” dzieją się wtedy, gdy odpowiadamy szczerze i pozwalamy sobie na chwilę ciszy.</div>
-    </div>
-  </div>
-</div>
-</body>
-<script>
-(function(){
-  const btn = document.getElementById('howtoBtn');
-  const modal = document.getElementById('howtoModal');
-  const closeBtn = document.getElementById('howtoClose');
-  if(!btn || !modal || !closeBtn) return;
-
-  function openModal(){
-    modal.classList.add('isOpen');
-    modal.setAttribute('aria-hidden','false');
-    document.body.style.overflow='hidden';
-  }
-  function closeModal(){
-    modal.classList.remove('isOpen');
-    modal.setAttribute('aria-hidden','true');
-    document.body.style.overflow='';
-  }
-
-  btn.addEventListener('click', openModal);
-  closeBtn.addEventListener('click', closeModal);
-  modal.addEventListener('click', (e)=>{
-    if(e.target && e.target.dataset && e.target.dataset.close) closeModal();
-  });
-  window.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape' && modal.classList.contains('isOpen')) closeModal();
-  });
-})();
-</script>
-</html>
+      stateI
