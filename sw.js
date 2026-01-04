@@ -1,4 +1,4 @@
-const CACHE = "rozmowy-2026-01-04-1";
+const CACHE = "rozkminki-v6";
 const ASSETS = [
   "./",
   "./index.html",
