@@ -118,6 +118,10 @@
     const playersBox = document.getElementById("playersBox");
     const catsBox = document.getElementById("catsBox");
     const startBtn = document.getElementById("startBtn");
+        const pMinus = document.getElementById("pMinus");
+const pPlus  = document.getElementById("pPlus");
+const pValue = document.getElementById("pValue");
+
 
     const turnPill = document.getElementById("turnPill");
     const metaPill = document.getElementById("metaPill");
@@ -323,10 +327,21 @@
     renderCats();
 
     playerCountEl.addEventListener("input", renderPlayers);
+        if (pValue) pValue.textContent = String(n);
+
     startBtn.addEventListener("click", startGame);
     nextBtn.addEventListener("click", nextTurn);
     skipBtn.addEventListener("click", skipQuestion);
     copyBtn.addEventListener("click", copyCurrent);
+        function bumpPlayers(delta){
+  const cur = parseInt(playerCountEl.value || "2", 10);
+  playerCountEl.value = clamp(cur + delta, 2, 20);
+  playerCountEl.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+pMinus.addEventListener("click", () => bumpPlayers(-1));
+pPlus.addEventListener("click", () => bumpPlayers(+1));
+
   </script>
 <div class="modal" id="howtoModal" aria-hidden="true" role="dialog" aria-label="Instrukcja gry">
   <div class="modalBackdrop" data-close="1"></div>
