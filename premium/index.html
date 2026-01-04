@@ -522,6 +522,8 @@ const pValue = document.getElementById("pValue");
       let n = clamp(parseInt(playerCountEl.value||"2",10),2,20);
       if(duoModeEl.checked){ n = 2; }
       playerCountEl.value = n;
+            if (pValue) pValue.textContent = String(n);
+
 
       playersBox.innerHTML = "";
       for(let i=0;i<n;i++){
@@ -816,6 +818,16 @@ const pValue = document.getElementById("pValue");
     skipBtn.addEventListener("click", skipQuestion);
     restartBtn.addEventListener("click", restart);
     backBtn.addEventListener("click", backToSetup);
+        function bumpPlayers(delta){
+  const cur = parseInt(playerCountEl.value || "2", 10);
+  playerCountEl.value = clamp(cur + delta, 2, 20);
+  // odpal Twój istniejący listener input -> renderPlayers()
+  playerCountEl.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+pMinus.addEventListener("click", () => bumpPlayers(-1));
+pPlus.addEventListener("click", () => bumpPlayers(+1));
+
 
     resumeBtn.addEventListener("click", resumeGame);
     resetSaveBtn.addEventListener("click", clearSave);
