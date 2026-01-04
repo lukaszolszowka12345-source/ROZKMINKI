@@ -1,4 +1,4 @@
-const CACHE = "rozmowy-v3";
+const CACHE = "rozmowy-2026-01-04-1";
 const ASSETS = [
   "./",
   "./index.html",
@@ -10,17 +10,44 @@ const ASSETS = [
 ];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
+  e.waitUntil(
+    caches.open(CACHE).then((cache) => cache.addAll(ASSETS))
+  );
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (e) => {
   e.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.map(k => (k !== CACHE) ? caches.delete(k) : null)))
+    caches.keys().then((keys) =>
+      Promise.all(keys.map((k) => (k !== CACHE ? caches.delete(k) : null)))
+    )
   );
   self.clients.claim();
 });
 
 self.addEventListener("fetch", (e) => {
-  e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
+  const req = e.request;
+  const url = new URL(req.url);
+
+  // tylko ten sam origin (żeby nie psuć zewnętrznych rzeczy)
+  if (url.origin !== self.location.origin) return;
+
+  // HTML: network-first (żeby szybciej łapać nowe wersje)
+  if (req.mode === "navigate" || (req.headers.get("accept") || "").includes("text/html")) {
+    e.respondWith(
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE).then((cache) => cache.put(req, copy));
+          return res;
+        })
+        .catch(() => caches.match(req).then((r) => r || caches.match("./index.html")))
+    );
+    return;
+  }
+
+  // reszta: cache-first
+  e.respondWith(
+    caches.match(req).then((cached) => cached || fetch(req))
+  );
 });
